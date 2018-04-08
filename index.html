@@ -6,12 +6,14 @@ layout: default
   {% for post in site.posts %}
     <article class="post">
 
-      <h1><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></h1>
+      <h1><a href="{{ site.baseurl }}{{ post.url }}">{{ post.writeup_ctf }} - {{ post.writeup_challenge }} - CTF Writeup</a></h1>
 
       <div class="entry">
-        {{ post.excerpt }}
+        {% if post.writeup_category %}<span><strong>Category : </strong>{{ post.writeup_category }}</span> - {% endif %}
+        {% if post.writeup_difficulty %}<span><strong>Difficulty : </strong>{{ post.writeup_difficulty }}</span>{% endif %}
+        <blockquote>{% if post.writeup_description %}{{ post.writeup_description }}</span>{% else %}{{ post.post_description }}{% endif %}</blockquote>
+        {% if post.writeup_vulnerability %}<span><strong>Vulnerability : </strong>{{ post.writeup_vulnerability }}</span><br><br>{% endif %}
       </div>
-
       <a href="{{ site.baseurl }}{{ post.url }}" class="read-more">Read More</a>
     </article>
   {% endfor %}
