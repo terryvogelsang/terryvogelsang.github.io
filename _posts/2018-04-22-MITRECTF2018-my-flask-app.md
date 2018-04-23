@@ -145,12 +145,6 @@ EXAMPLE_SESSION = '.eJwlj0FuwzAMBP-icw4iJdFiPmNQ5BINArSAnZyK_j0Get_BzP6WPQ-cX-X-
 
 p = PrettyPrinter()
 
-signer = URLSafeTimedSerializer(
-    'secret-key', salt='cookie-session',
-    serializer=session_json_serializer,
-    signer_kwargs={'key_derivation': 'hmac', 'digest_method': sha512}
-)
-
 def decodeCookiePayload():
     
     if EXAMPLE_SESSION[0] == '.':
