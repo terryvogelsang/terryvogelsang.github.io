@@ -61,7 +61,7 @@ I then tried to decode my session cookie to see what's in. Our cookie is structu
 * The payload is base64 encoded and gzipped
 * Then follows the timestamp and the signature, both base64 encoded
 
-I wrote a script allowing me to quickly decode the payload of the cookie and retrieved the following payload : 
+I wrote a script (See [Sources](#decode-flask-cookie-datas)) allowing me to quickly decode the payload of the cookie and retrieved the following payload : 
 
 ```
 {
@@ -86,7 +86,7 @@ The first line retrieves the environment variable value and stores it for use in
 
 So, I wrote a script to try to verify the signature of my session cookie to see if `secret-key` really is the valid key. To do that I inspected the Flask source code to see what kind of `itsdangerous` signer Flask was using to generate and sign the cookie. I found this information [here](https://github.com/pallets/flask/blob/0.10.1/flask/sessions.py#L272-L299). 
 
-The signer I used is the following : 
+The signer I used is the following (See [Sources](#verify-flask-cookie) for full **valid** checker script)  : 
 
 ```python
 from flask.sessions import session_json_serializer
@@ -127,6 +127,49 @@ In the browser it looks like :
 <img class="screenshot" src="../images/2018-04-22-MITRECTF2018-my-flask-app/logged_as_admin.png" alt="Grep Output">
 
 ## Sources
+
+### <a name="decode-flask-cookie-datas"></a> Decode Flask Cookie data
+
+```python
+#!/usr/bin/env python3
+# encoding: utf-8
+
+from hashlib import sha512
+from flask.sessions import session_json_serializer
+from itsdangerous import URLSafeTimedSerializer, BadTimeSignature
+import base64
+import zlib
+from cuteprint import PrettyPrinter
+
+EXAMPLE_SESSION = '.eJwlj0FuwzAMBP-icw4iJdFiPmNQ5BINArSAnZyK_j0Get_BzP6WPQ-cX-X-Ot64lf0R5V5s1sEBClFMY-qWvACMJFelBKp6o1hWVRJC050Cm4oNSCNp2aXpUIfVMbeexKjcPRKrL2dJulYDxDW56aVL1RgZQtUqlVvx88j99fPE99UTGTxyTYQsUV5kdeNltnX22cJ1CNs2-eLeJ47_E9LL3wdmwz_i.DbwCXg.HQ1RqyWO8SVCgiL5zC-weeD3AjkdGVWTpXSl_PUyC4nnK7kvKrzX6uv1pwxWzx6VaukHjzb5Dkf8vTo3yNmHEA'
+
+p = PrettyPrinter()
+
+signer = URLSafeTimedSerializer(
+    'secret-key', salt='cookie-session',
+    serializer=session_json_serializer,
+    signer_kwargs={'key_derivation': 'hmac', 'digest_method': sha512}
+)
+
+def decodeCookiePayload():
+    
+    if EXAMPLE_SESSION[0] == '.':
+        session_payload = EXAMPLE_SESSION[1:].split('.')[0]
+        p.print_good("Extracted Session datas : {}".format(session_payload))
+        decoded_session_payload = base64.urlsafe_b64decode(session_payload)
+        decompressed_session_payload = zlib.decompress(decoded_session_payload)
+        p.print_good("Extracted decoded uncompressed datas : {} ".format(decompressed_session_payload))
+        
+if __name__ == '__main__':
+
+    p.print_title("Flask Cookie Checker")
+
+    # Decode
+    p.print_separator(suffix="DECODING COOKIE PAYLOAD", separator='=')
+    t1 = p.start_progress(task="Decoding Cookie Payload from {} ...".format(EXAMPLE_SESSION), enable_dots=False)
+    decodeCookiePayload()
+    p.stop_progress(t1)
+```
 
 ### <a name="verify-flask-cookie"></a> Verify Flask Cookie
 
