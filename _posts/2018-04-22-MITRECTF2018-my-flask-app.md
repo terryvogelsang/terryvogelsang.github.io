@@ -4,7 +4,7 @@ title: MITRE CTF 2018 - My Flask App - CTF Writeup
 writeup_ctf: MITRE CTF 2018
 writeup_challenge: My Flask App
 writeup_category: Web
-writeup_vulnerability: Flask Session Cookie Forging
+writeup_vulnerability: Python Flask Session Cookie Forging
 writeup_difficulty: Medium
 writeup_description: Okay, we admit it. Rails is bad. Can you help us test our new login page written in Flask? It’s running live here. We think its 512x better than the old one.
 ---
