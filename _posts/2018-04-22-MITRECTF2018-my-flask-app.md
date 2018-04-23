@@ -156,7 +156,7 @@ def decodeCookiePayload():
         
 if __name__ == '__main__':
 
-    p.print_title("Flask Cookie Checker")
+    p.print_title("Flask Cookie Session Datas Decoder")
 
     # Decode
     p.print_separator(suffix="DECODING COOKIE PAYLOAD", separator='=')
